@@ -1,6 +1,7 @@
 package com.noteit.beans;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = "emailAddress"))
@@ -21,6 +22,10 @@ public class User {
     private String name;
     @Column(nullable = false)
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "uploadedBy")
+    private List<Book> uploadedBooks;
+
 
     public User() {
     }
