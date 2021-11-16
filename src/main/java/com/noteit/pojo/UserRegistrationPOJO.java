@@ -1,16 +1,17 @@
-package com.noteit.beans.dto;
+package com.noteit.pojo;
 
-public class UserRegistrationDTO {
+public class UserRegistrationPOJO {
+
     private int userType;
     private String emailAddress;
     private String password;
     private String name;
     private String phoneNumber;
 
-    public UserRegistrationDTO(){}
+    public UserRegistrationPOJO() {
+    }
 
-    public UserRegistrationDTO(int userType, String emailAddress, String password, String name, String phoneNumber) {
-        super();
+    public UserRegistrationPOJO(int userType, String emailAddress, String password, String name, String phoneNumber) {
         this.userType = userType;
         this.emailAddress = emailAddress;
         this.password = password;

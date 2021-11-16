@@ -1,10 +1,9 @@
-package com.noteit.contollers;
+package com.noteit.controller;
 
-import com.noteit.beans.User;
-import com.noteit.beans.dto.UserRegistrationDTO;
-import com.noteit.config.JwtTokenProvider;
-import com.noteit.repositories.UserRepository;
-import com.noteit.services.UserService;
+import com.noteit.bean.User;
+import com.noteit.pojo.UserRegistrationPOJO;
+import com.noteit.repository.UserRepository;
+import com.noteit.service.UserService;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +22,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 
 @RestController
-@RequestMapping("/lms/v1")
+@RequestMapping("/v1")
 public class UserController {
     private static Logger log = LoggerFactory.getLogger(UserService.class);
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtTokenProvider tokenProvider;
 
     @Autowired
     private UserRepository userRepository;
@@ -39,7 +32,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    /*@PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResponseEntity<String> authenticate(@RequestBody User user) {
         log.info("UserResourceImpl : authenticate");
         JSONObject jsonObject = new JSONObject();
@@ -64,11 +57,11 @@ public class UserController {
             }
             return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
         }
-    }
+    }*/
 
     @ModelAttribute("user")
-    public UserRegistrationDTO userRegistrationDTO() {
-        return new UserRegistrationDTO();
+    public UserRegistrationPOJO userRegistrationDTO() {
+        return new UserRegistrationPOJO();
     }
 
     @GetMapping("/user/profile")
@@ -80,9 +73,9 @@ public class UserController {
         return user;
     }
     @RequestMapping(method = RequestMethod.POST, value = "/registration")
-    public ResponseEntity registerUserAccount(@RequestBody UserRegistrationDTO registrationDTO) {
+    public ResponseEntity registerUserAccount(@RequestBody UserRegistrationPOJO registrationPOJO) {
         try {
-            userService.save(registrationDTO);
+            userService.save(registrationPOJO);
             return ResponseEntity.status(HttpStatus.OK).body("{'data':'Registered Successfully'}");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{'data':'Email already in use'}");

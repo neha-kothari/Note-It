@@ -1,4 +1,4 @@
-package com.noteit.beans;
+package com.noteit.bean;
 
 import javax.persistence.*;
 import java.util.List;
@@ -25,6 +25,9 @@ public class User {
 
     @OneToMany(mappedBy = "uploadedBy")
     private List<Book> uploadedBooks;
+
+    @OneToMany(mappedBy = "userId")
+    private List<Notebook> notebooks;
 
 
     public User() {

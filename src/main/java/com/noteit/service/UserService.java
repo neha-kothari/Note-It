@@ -1,12 +1,12 @@
-package com.noteit.services;
+package com.noteit.service;
 
-import com.noteit.beans.User;
-import com.noteit.beans.dto.UserRegistrationDTO;
+import com.noteit.bean.User;
+import com.noteit.pojo.UserRegistrationPOJO;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 
 public interface UserService extends UserDetailsService {
-    User save(UserRegistrationDTO registrationDto);
+    User save(UserRegistrationPOJO registrationPOJO);
 
     User getUserFromUserId(int id);
 
