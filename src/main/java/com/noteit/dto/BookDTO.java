@@ -15,7 +15,7 @@ public class BookDTO {
     private Integer yearOfRelease;
     private String imageLocation;
     private String description;
-    private UserDTO uploadedByUser;
+    private String uploadedByUser;
     private boolean isDeleted;
     private String error;
 }

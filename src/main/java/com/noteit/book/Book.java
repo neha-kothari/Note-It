@@ -5,10 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
 @Entity
+@Table(name = "books")
 public class Book {
 
     @Id
@@ -20,15 +22,15 @@ public class Book {
     private String isbnNumber;
     @Column(nullable = false)
     private String author;
-    @Column(nullable = false)
+
     private String publisher;
     @Column
     private Integer yearOfRelease;
 
     @Column
     private String imageLocation;
-    @Column
-    private String pdfFileLocation;
+    @Lob
+    private byte[] file;
     @Column
     private String description;
 
@@ -38,4 +40,7 @@ public class Book {
 
     @Column
     private boolean isDeleted;
+
+    @Column
+    private Date createdOn;
 }

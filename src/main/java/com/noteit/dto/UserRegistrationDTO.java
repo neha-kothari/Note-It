@@ -10,7 +10,8 @@ public class UserRegistrationDTO {
     private int userType;
     private String emailAddress;
     private String password;
-    private String name;
+    private String firstName;
+    private String lastName;
     private String phoneNumber;
 
 }

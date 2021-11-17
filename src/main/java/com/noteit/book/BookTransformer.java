@@ -1,10 +1,21 @@
 package com.noteit.book;
 
 import com.noteit.dto.BookDTO;
+import com.noteit.user.User;
+import com.noteit.user.UserRepository;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.*;
 
+@Component
 public class BookTransformer {
+
+    @Resource
+    private BookRepository bookRepository;
+
+    @Resource
+    private UserRepository userRepository;
 
     public List<BookDTO> toBookDTOs(List<Book> books) {
         if (Objects.isNull(books)) {
@@ -17,23 +28,15 @@ public class BookTransformer {
                 BookDTO bookDTO = new BookDTO();
                 bookDTO.setBookId(book.getBookId());
                 bookDTO.setBookName(book.getBookName());
-                /*bookDTO.setEmail(student.getEmail());
-                bookDTO.setFirstName(student.getFirstName());
-                bookDTO.setLastName(student.getLastName());
-                bookDTO.setGraduationYear(String.valueOf(student.getGraduationYear().getYear()));
-                bookDTO.setTotalCredits(student.getTotalCredits());
+                bookDTO.setIsbnNumber(book.getIsbnNumber());
+                bookDTO.setAuthor(book.getAuthor());
+                bookDTO.setPublisher(book.getPublisher());
+                bookDTO.setYearOfRelease(book.getYearOfRelease());
+                bookDTO.setDescription(book.getDescription());
+                bookDTO.setImageLocation(book.getImageLocation());
+                bookDTO.setUploadedByUser("Neha");
+                //bookDTO.setUploadedByUser(userRepository.findByUserId(book.getUploadedBy().getUserId()).getName());
                 bookDTO.setDeleted(book.isDeleted());
-                try {
-                    studentDto.setImagePath(studentService.retrieveImage(student.getPhotographPath()));
-                } catch (Exception e) {
-                    bookDTO.setError(e.getMessage());
-                }
-
-                DomainDto domainDto = domainTransformer.toDto(student.getDomain());
-                studentDto.setDomainDto(domainDto);
-
-                SpecialisationDto specialisationDto = specialisationTransformer.toDto(student.getSpecialisation());
-                studentDto.setSpecialisationDto(specialisationDto);*/
 
                 bookDTOs.add(bookDTO);
             } else {
@@ -42,5 +45,26 @@ public class BookTransformer {
         });
 
         return bookDTOs;
+    }
+
+    public Book toEntity(Book book, BookDTO request) {
+        book.setBookName(request.getBookName());
+        book.setAuthor(request.getAuthor());
+        book.setDescription(request.getDescription());
+        book.setIsbnNumber(request.getIsbnNumber());
+
+        //User user = userRepository.findById(request.getUploadedByUser());
+
+       /* book.setGraduationYear(LocalDate.of(Integer.parseInt(request.getGraduationYear()), 1, 1));
+        book.setTotalCredits(request.getTotalCredits());
+        book.setDeleted(request.isDeleted());
+
+        Domain domain = domainRepository.findByProgram(request.getDomainDto().getProgram());
+        student.setDomain(domain);
+
+        Specialisation specialisation = specialisationRepository.findByCode(request.getSpecialisationDto().getCode());
+        student.setSpecialisation(specialisation);*/
+
+        return bookRepository.saveAndFlush(book);
     }
 }
