@@ -2,7 +2,6 @@ package com.noteit.book;
 
 import com.noteit.dto.BookDTO;
 import com.noteit.dto.FileDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -30,7 +29,7 @@ public class BookController {
 
     @GetMapping
     public ResponseEntity<List<BookDTO>> getBooks(){
-        System.out.println("Heereeeeeee");
+
         List<BookDTO> bookDTOs = bookService.getAllBooks();
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)

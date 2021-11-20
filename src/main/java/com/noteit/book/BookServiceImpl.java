@@ -2,6 +2,7 @@ package com.noteit.book;
 
 import com.noteit.dto.BookDTO;
 import com.noteit.dto.FileDTO;
+import com.noteit.user.UserRepository;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,9 @@ public class BookServiceImpl implements BookService {
 
     @Resource
     private BookRepository bookRepository;
+
+    @Resource
+    private UserRepository userRepository;
 
     @Resource
     private BookTransformer bookTransformer;
@@ -59,6 +63,7 @@ public class BookServiceImpl implements BookService {
     public BookDTO addBook(BookDTO bookDetails, MultipartFile bookFile, Long user_id) throws Exception{
         Book book = bookRepository.save(bookTransformer.toEntity(new Book(), bookDetails));
         uploadBook(book, bookFile);
+        book.setUploadedBy(userRepository.findByUserId(user_id));
         bookRepository.save(book);
 
         List<Book> books = new ArrayList<>();
