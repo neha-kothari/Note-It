@@ -1,6 +1,8 @@
 package com.noteit.chapter;
 
+import com.noteit.book.Book;
 import com.noteit.notebook.Notebook;
+import com.noteit.user.User;
 import lombok.*;
 import lombok.NoArgsConstructor;
 
@@ -16,8 +18,9 @@ public class Chapter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chapterId;
 
-    @Column(nullable = false)
-    private Integer bookId;
+    @ManyToOne
+    @JoinColumn(name="bookId")
+    private Book book;
 
     @Column(nullable = false)
     private Integer chapterNumber;

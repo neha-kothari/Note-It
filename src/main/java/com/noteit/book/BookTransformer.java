@@ -1,6 +1,10 @@
 package com.noteit.book;
 
+import com.noteit.chapter.Chapter;
+import com.noteit.chapter.ChapterTransformer;
 import com.noteit.dto.BookDTO;
+import com.noteit.dto.BookDetailsDTO;
+import com.noteit.dto.ChapterDTO;
 import com.noteit.user.User;
 import com.noteit.user.UserRepository;
 import org.springframework.stereotype.Component;
@@ -10,6 +14,9 @@ import java.util.*;
 
 @Component
 public class BookTransformer {
+
+    @Resource
+    private ChapterTransformer chapterTransformer;
 
     @Resource
     private BookRepository bookRepository;
@@ -24,7 +31,7 @@ public class BookTransformer {
 
         List<BookDTO> bookDTOs = new ArrayList<>();
         books.forEach(book -> {
-            if (Objects.nonNull(book)) {
+            if (Objects.nonNull(book) && !book.isDeleted()) {
                 BookDTO bookDTO = new BookDTO();
                 bookDTO.setBookId(book.getBookId());
                 bookDTO.setBookName(book.getBookName());
@@ -32,12 +39,8 @@ public class BookTransformer {
                 bookDTO.setAuthor(book.getAuthor());
                 bookDTO.setPublisher(book.getPublisher());
                 bookDTO.setYearOfRelease(book.getYearOfRelease());
-                bookDTO.setDescription(book.getDescription());
                 bookDTO.setImageLocation(book.getImageLocation());
-                bookDTO.setUploadedByUser("Neha");
-                //bookDTO.setUploadedByUser(userRepository.findByUserId(book.getUploadedBy().getUserId()).getName());
-                bookDTO.setDeleted(book.isDeleted());
-
+                bookDTO.setUploadedByUser(userRepository.findByUserId(book.getUploadedBy().getUserId()).getName());
                 bookDTOs.add(bookDTO);
             } else {
                 bookDTOs.add(null);
@@ -50,7 +53,6 @@ public class BookTransformer {
     public Book toEntity(Book book, BookDTO request) {
         book.setBookName(request.getBookName());
         book.setAuthor(request.getAuthor());
-        book.setDescription(request.getDescription());
         book.setIsbnNumber(request.getIsbnNumber());
 
         //User user = userRepository.findById(request.getUploadedByUser());
@@ -66,5 +68,28 @@ public class BookTransformer {
         student.setSpecialisation(specialisation);*/
 
         return bookRepository.saveAndFlush(book);
+    }
+
+    public BookDetailsDTO toBookDTO(Book book) throws Exception {
+
+        if (null == book || book.isDeleted()) {
+            throw new Exception("Invalid Book Id");
+        }
+        BookDetailsDTO bookDetailsDTO = new BookDetailsDTO();
+        bookDetailsDTO.setBookId(book.getBookId());
+        bookDetailsDTO.setBookName(book.getBookName());
+        bookDetailsDTO.setIsbnNumber(book.getIsbnNumber());
+        bookDetailsDTO.setAuthor(book.getAuthor());
+        bookDetailsDTO.setPublisher(book.getPublisher());
+        bookDetailsDTO.setYearOfRelease(book.getYearOfRelease());
+        bookDetailsDTO.setImageLocation(book.getImageLocation());
+        bookDetailsDTO.setUploadedByUser(userRepository.findByUserId(book.getUploadedBy().getUserId()).getName());
+        bookDetailsDTO.setDescription(book.getDescription());
+        List<ChapterDTO> chapters = new ArrayList<>();
+        for (Chapter chapter : book.getChapters()) {
+            chapters.add(chapterTransformer.toDto(chapter));
+        }
+        bookDetailsDTO.setChapters(chapters);
+        return bookDetailsDTO;
     }
 }

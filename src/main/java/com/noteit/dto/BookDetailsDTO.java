@@ -3,9 +3,11 @@ package com.noteit.dto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
-public class BookDTO {
+public class BookDetailsDTO {
 
     private Long bookId;
     private String bookName;
@@ -16,4 +18,6 @@ public class BookDTO {
     private String imageLocation;
     private String uploadedByUser;
     private String error;
+    private String description;
+    private List<ChapterDTO> chapters;
 }

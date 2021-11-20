@@ -1,11 +1,13 @@
 package com.noteit.book;
 
+import com.noteit.chapter.Chapter;
 import com.noteit.user.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -18,7 +20,7 @@ public class Book {
     private Long bookId;
     @Column(nullable = false)
     private String bookName;
-    @Column(nullable = true)
+    @Column
     private String isbnNumber;
     @Column(nullable = false)
     private String author;
@@ -43,4 +45,10 @@ public class Book {
 
     @Column
     private Date createdOn;
+
+    @Column
+    private boolean isSplit;
+
+    @OneToMany(mappedBy = "book")
+    private List<Chapter> chapters;
 }

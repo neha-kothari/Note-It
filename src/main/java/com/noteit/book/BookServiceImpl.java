@@ -1,6 +1,7 @@
 package com.noteit.book;
 
 import com.noteit.dto.BookDTO;
+import com.noteit.dto.BookDetailsDTO;
 import com.noteit.dto.FileDTO;
 import com.noteit.user.UserRepository;
 import org.springframework.core.io.ByteArrayResource;
@@ -34,11 +35,10 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public BookDTO getBookDetails(Long bookId) {
+    public BookDetailsDTO getBookDetails(Long bookId) throws Exception {
 
-        List<Book> books = new ArrayList<>();
-        books.add(bookRepository.findByBookId(bookId));
-        return bookTransformer.toBookDTOs(books).get(0);
+        Book book = bookRepository.findByBookId(bookId);
+        return bookTransformer.toBookDTO(book);
     }
 
     @Override

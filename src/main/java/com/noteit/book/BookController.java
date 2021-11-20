@@ -1,11 +1,14 @@
 package com.noteit.book;
 
 import com.noteit.dto.BookDTO;
+import com.noteit.dto.BookDetailsDTO;
 import com.noteit.dto.FileDTO;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -37,11 +40,15 @@ public class BookController {
     }
 
     @GetMapping("/{book_id}")
-    public ResponseEntity<BookDTO> getBookDetails(@PathVariable Long book_id){
-        BookDTO bookDTO = bookService.getBookDetails(book_id);
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(bookDTO);
+    public ResponseEntity<BookDetailsDTO> getBookDetails(@PathVariable Long book_id){
+        try {
+            BookDetailsDTO bookDetailsDTO = bookService.getBookDetails(book_id);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(bookDetailsDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     @GetMapping("/{book_id}/download")
