@@ -3,6 +3,7 @@ package com.noteit.book;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.noteit.dto.BookDTO;
 import com.noteit.dto.BookDetailsDTO;
+import com.noteit.dto.ChapterDTO;
 import com.noteit.dto.FileDTO;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -52,6 +53,19 @@ public class BookController {
         }
     }
 
+    @PostMapping("/split")
+    public ResponseEntity<BookDetailsDTO> getBookDetails(@RequestBody BookDetailsDTO bookDetails){
+        try {
+            BookDetailsDTO bookDetailsDTO = bookService.splitBook(bookDetails);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(bookDetailsDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+
     @GetMapping("/{book_id}/download")
     public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable Long book_id) {
 
@@ -64,6 +78,7 @@ public class BookController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-
     }
+
+
 }

@@ -2,6 +2,7 @@ package com.noteit.book;
 
 import com.noteit.dto.BookDTO;
 import com.noteit.dto.BookDetailsDTO;
+import com.noteit.dto.ChapterDTO;
 import com.noteit.dto.FileDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,4 +23,6 @@ public interface BookService {
 
     BookDTO addBook(BookDTO bookDetails, MultipartFile bookFile, Long user_id) throws Exception;
     String uploadBookFile(MultipartFile bookFile) throws Exception;
+
+    BookDetailsDTO splitBook(BookDetailsDTO bookDetails) throws Exception;
 }

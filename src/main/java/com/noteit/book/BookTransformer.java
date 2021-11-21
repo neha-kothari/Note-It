@@ -55,22 +55,11 @@ public class BookTransformer {
         book.setAuthor(request.getAuthor());
         book.setIsbnNumber(request.getIsbnNumber());
 
-        //User user = userRepository.findById(request.getUploadedByUser());
-
-       /* book.setGraduationYear(LocalDate.of(Integer.parseInt(request.getGraduationYear()), 1, 1));
-        book.setTotalCredits(request.getTotalCredits());
-        book.setDeleted(request.isDeleted());
-
-        Domain domain = domainRepository.findByProgram(request.getDomainDto().getProgram());
-        student.setDomain(domain);
-
-        Specialisation specialisation = specialisationRepository.findByCode(request.getSpecialisationDto().getCode());
-        student.setSpecialisation(specialisation);*/
 
         return bookRepository.saveAndFlush(book);
     }
 
-    public BookDetailsDTO toBookDTO(Book book) throws Exception {
+    public BookDetailsDTO toBookDetailsDTO(Book book) throws Exception {
 
         if (null == book || book.isDeleted()) {
             throw new Exception("Invalid Book Id");

@@ -28,4 +28,14 @@ public class ChapterTransformer {
 
         return chapterDTO;
     }
+
+    public Chapter toEntity(Chapter chapter, ChapterDTO request) {
+
+        chapter.setChapterName(request.getChapterName());
+        chapter.setChapterNumber(request.getChapterNumber());
+        chapter.setDescription(request.getDescription());
+        chapter.setStartPage(request.getStartPage());
+        chapter.setEndPage(request.getEndPage());
+        return chapter;
+    }
 }

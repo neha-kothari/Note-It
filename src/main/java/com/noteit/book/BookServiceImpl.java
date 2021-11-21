@@ -1,7 +1,11 @@
 package com.noteit.book;
 
+import com.noteit.chapter.Chapter;
+import com.noteit.chapter.ChapterService;
+import com.noteit.chapter.ChapterTransformer;
 import com.noteit.dto.BookDTO;
 import com.noteit.dto.BookDetailsDTO;
+import com.noteit.dto.ChapterDTO;
 import com.noteit.dto.FileDTO;
 import com.noteit.user.UserRepository;
 import org.apache.logging.log4j.util.Strings;
@@ -34,6 +38,9 @@ public class BookServiceImpl implements BookService {
     @Resource
     private BookTransformer bookTransformer;
 
+    @Resource
+    private ChapterService chapterService;
+
     @Override
     @Transactional(readOnly = true)
     public List<BookDTO> getAllBooks() {
@@ -46,7 +53,7 @@ public class BookServiceImpl implements BookService {
     public BookDetailsDTO getBookDetails(Long bookId) throws Exception {
 
         Book book = bookRepository.findByBookId(bookId);
-        return bookTransformer.toBookDTO(book);
+        return bookTransformer.toBookDetailsDTO(book);
     }
 
     @Override
@@ -89,6 +96,26 @@ public class BookServiceImpl implements BookService {
         }
         Path path = Paths.get(bookBasePath + bookPath);
         return Files.readAllBytes(path);
+    }
+
+    @Override
+    @Transactional
+    public BookDetailsDTO splitBook(BookDetailsDTO bookDetails) throws Exception {
+
+        Book book = bookRepository.findByBookId(bookDetails.getBookId());
+        validateRequest(book, bookDetails.getChapters());
+        List<Chapter> bookChapters = new ArrayList<>();
+        for (ChapterDTO chapter : bookDetails.getChapters()) {
+            Chapter c = chapterService.addChapter(chapter, book);
+            bookChapters.add(c);
+        }
+        book.setChapters(bookChapters);
+        bookRepository.save(book);
+        return bookTransformer.toBookDetailsDTO(book);
+    }
+
+    public void validateRequest(Book book, List<ChapterDTO> chapters) throws Exception{
+
     }
 }
 
