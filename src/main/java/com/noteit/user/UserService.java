@@ -1,6 +1,8 @@
 package com.noteit.user;
 
+import com.noteit.dto.UserRegistrationDTO;
+
 public interface UserService {
 
-    void addUser(User user);
+    User addUser(UserRegistrationDTO userDTO);
 }

@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.noteit.book.BookService;
 import com.noteit.dto.BookDTO;
 import com.noteit.dto.UserDTO;
+import com.noteit.dto.UserRegistrationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,17 @@ public class UserController {
         return ResponseEntity.created(null)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(bookService.addBook(request, bookFile, user_id));
+
+    }
+
+    @PostMapping(path ="/users/trial")
+    public ResponseEntity<User> addUser(@RequestBody UserRegistrationDTO user) throws Exception {
+
+        return ResponseEntity.created(null)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(userService.addUser(user));
+
+
 
     }
 }

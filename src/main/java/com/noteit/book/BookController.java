@@ -1,5 +1,6 @@
 package com.noteit.book;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.noteit.dto.BookDTO;
 import com.noteit.dto.BookDetailsDTO;
 import com.noteit.dto.FileDTO;
@@ -8,8 +9,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -52,11 +53,17 @@ public class BookController {
     }
 
     @GetMapping("/{book_id}/download")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable Long book_id){
-        FileDTO file = bookService.downloadBook(book_id);
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION,"attachment:filename=\\"+file.getFileName()+"\\")
-                .body(file.getData());
+    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable Long book_id) {
+
+        try {
+            FileDTO file = bookService.downloadBook(book_id);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .header(HttpHeaders.CONTENT_DISPOSITION,"attachment:filename=\\"+file.getFileName()+"\\")
+                    .body(file.getData());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
     }
 }

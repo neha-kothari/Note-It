@@ -31,8 +31,8 @@ public class Book {
 
     @Column
     private String imageLocation;
-    @Lob
-    private byte[] file;
+    @Column
+    private String fileLocation;
     @Column
     private String description;
 

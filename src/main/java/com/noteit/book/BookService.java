@@ -17,9 +17,9 @@ public interface BookService {
     List<BookDTO> getAllBooks();
 
     BookDetailsDTO getBookDetails(Long bookId) throws Exception;
-
-    FileDTO downloadBook(Long bookId);
+    byte[] retrieveBook(String bookPath) throws Exception;
+    FileDTO downloadBook(Long bookId) throws Exception ;
 
     BookDTO addBook(BookDTO bookDetails, MultipartFile bookFile, Long user_id) throws Exception;
-    Book uploadBook(Book book, MultipartFile imageFile) throws Exception;
+    String uploadBookFile(MultipartFile bookFile) throws Exception;
 }
