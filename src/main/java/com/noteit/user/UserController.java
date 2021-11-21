@@ -41,10 +41,4 @@ public class UserController {
                 .body(bookService.addBook(request, bookFile, user_id));
 
     }
-
-    @PostMapping(path="/trial/addUser")
-    public void addUser(@RequestBody User user) {
-        userService.addUser(user);
-
-    }
 }
