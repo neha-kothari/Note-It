@@ -64,6 +64,16 @@ public class UserController {
 
     }
 
+    @DeleteMapping(path ="/users/{user_id}/notes/{chapter_id}")
+    public ResponseEntity<NotesOutputDTO> deleteFromNotes(@PathVariable Long user_id, @PathVariable Long chapter_id) throws Exception {
+
+
+        return ResponseEntity.created(null)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(notebookService.deleteChapter(user_id, chapter_id));
+
+    }
+
     @PostMapping(path ="/users/trial")
     public ResponseEntity<User> addUser(@RequestBody UserRegistrationDTO user) throws Exception {
 

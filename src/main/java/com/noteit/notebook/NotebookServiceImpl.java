@@ -24,6 +24,9 @@ public class NotebookServiceImpl implements NotebookService{
     private UserRepository userRepository;
 
     @Resource
+    private ChapterRepository chapterRepository;
+
+    @Resource
     private NotebookTransformer notebookTransformer;
 
     @Override
@@ -42,11 +45,30 @@ public class NotebookServiceImpl implements NotebookService{
     }
 
     @Override
+    @Transactional
     public NotesOutputDTO getNotes(Long user_id) {
         Notebook notebook = notebookRepository.findNotebookIdForUser(user_id);
         if (null == notebook) {
             return null;
         }
+        return notebookTransformer.toNotesOutputDTO(notebook);
+    }
+
+    @Override
+    @Transactional
+    public NotesOutputDTO deleteChapter(Long user_id, Long chapter_id) {
+        Notebook notebook = notebookRepository.findNotebookIdForUser(user_id);
+        if (null == notebook) {
+            return null;
+        }
+        if (notebook.getChapters() != null) {
+            Chapter chapter = chapterRepository.findByChapterId(chapter_id);
+            if (notebook.getChapters().contains(chapter)) {
+                notebook.getChapters().remove(chapter);
+            }
+            notebookRepository.save(notebook);
+        }
+
         return notebookTransformer.toNotesOutputDTO(notebook);
     }
 }
