@@ -13,4 +13,5 @@ public class ChapterDTO {
     private int startPage;
     private int endPage;
     private String description;
+    private String bookName;
 }

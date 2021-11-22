@@ -4,15 +4,9 @@ import com.noteit.dto.ChapterDTO;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Component
 public class ChapterTransformer {
-
-    @Resource
-    private ChapterRepository chapterRepository;
 
     public ChapterDTO toDto(Chapter chapter) {
         ChapterDTO chapterDTO = new ChapterDTO();
@@ -25,7 +19,7 @@ public class ChapterTransformer {
         chapterDTO.setDescription(chapter.getDescription());
         chapterDTO.setStartPage(chapter.getStartPage());
         chapterDTO.setEndPage(chapterDTO.getEndPage());
-
+        chapterDTO.setBookName(chapter.getBook().getBookName());
         return chapterDTO;
     }
 

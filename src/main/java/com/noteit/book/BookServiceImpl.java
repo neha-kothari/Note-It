@@ -2,7 +2,6 @@ package com.noteit.book;
 
 import com.noteit.chapter.Chapter;
 import com.noteit.chapter.ChapterService;
-import com.noteit.chapter.ChapterTransformer;
 import com.noteit.dto.BookDTO;
 import com.noteit.dto.BookDetailsDTO;
 import com.noteit.dto.ChapterDTO;
@@ -28,6 +27,9 @@ public class BookServiceImpl implements BookService {
 
     @Value(("${noteit.book.path}"))
     private String bookBasePath;
+
+    @Value(("${noteit.book.default-image.path}"))
+    private String defaultImagePath;
 
     @Resource
     private BookRepository bookRepository;
@@ -59,6 +61,9 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDTO addBook(BookDTO bookDetails, MultipartFile bookFile, Long user_id) throws Exception{
         Book book = bookRepository.save(bookTransformer.toEntity(new Book(), bookDetails));
+        if (book.getImageLocation() == null || book.getImageLocation().isEmpty()) {
+            book.setImageLocation(defaultImagePath);
+        }
         book.setFileLocation(uploadBookFile(bookFile));
         book.setUploadedBy(userRepository.findByUserId(user_id));
         bookRepository.save(book);
@@ -110,6 +115,7 @@ public class BookServiceImpl implements BookService {
             bookChapters.add(c);
         }
         book.setChapters(bookChapters);
+        book.setSplit(true);
         bookRepository.save(book);
         return bookTransformer.toBookDetailsDTO(book);
     }

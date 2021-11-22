@@ -19,5 +19,6 @@ public class BookDetailsDTO {
     private String uploadedByUser;
     private String error;
     private String description;
+    private boolean isSplit;
     private List<ChapterDTO> chapters;
 }

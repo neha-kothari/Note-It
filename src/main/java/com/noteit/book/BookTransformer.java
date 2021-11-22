@@ -5,7 +5,6 @@ import com.noteit.chapter.ChapterTransformer;
 import com.noteit.dto.BookDTO;
 import com.noteit.dto.BookDetailsDTO;
 import com.noteit.dto.ChapterDTO;
-import com.noteit.user.User;
 import com.noteit.user.UserRepository;
 import org.springframework.stereotype.Component;
 
@@ -74,11 +73,14 @@ public class BookTransformer {
         bookDetailsDTO.setImageLocation(book.getImageLocation());
         bookDetailsDTO.setUploadedByUser(userRepository.findByUserId(book.getUploadedBy().getUserId()).getName());
         bookDetailsDTO.setDescription(book.getDescription());
-        List<ChapterDTO> chapters = new ArrayList<>();
-        for (Chapter chapter : book.getChapters()) {
-            chapters.add(chapterTransformer.toDto(chapter));
+        bookDetailsDTO.setSplit(book.isSplit());
+        if (book.isSplit()) {
+            List<ChapterDTO> chapters = new ArrayList<>();
+            for (Chapter chapter : book.getChapters()) {
+                chapters.add(chapterTransformer.toDto(chapter));
+            }
+            bookDetailsDTO.setChapters(chapters);
         }
-        bookDetailsDTO.setChapters(chapters);
         return bookDetailsDTO;
     }
 }

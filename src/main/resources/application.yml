@@ -26,3 +26,5 @@ spring:
 noteit:
   book:
     path: D:\\Projects\\Books\\
+    default-image:
+          path: https://us.123rf.com/450wm/oculo/oculo2004/oculo200400003/143645399-no-image-available-icon.jpg?ver=6

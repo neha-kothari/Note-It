@@ -3,7 +3,9 @@ package com.noteit.notebook;
 import com.noteit.chapter.Chapter;
 import com.noteit.chapter.ChapterRepository;
 import com.noteit.dto.NotebookDTO;
+import com.noteit.dto.NotesOutputDTO;
 import com.noteit.user.User;
+import com.noteit.user.UserRepository;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -19,23 +21,32 @@ public class NotebookServiceImpl implements NotebookService{
     private NotebookRepository notebookRepository;
 
     @Resource
-    private ChapterRepository chapterRepository;
+    private UserRepository userRepository;
+
+    @Resource
+    private NotebookTransformer notebookTransformer;
 
     @Override
     @Transactional
-    public void saveNotes(NotebookDTO notebookDTO, User user) {
+    public void saveNotes(NotebookDTO notebookDTO, Long user_id) {
 
-        Notebook notebook = notebookRepository.findNotebookIdForUser(user.getUserId());
+        Notebook notebook = notebookRepository.findNotebookIdForUser(user_id);
         if (null == notebook) {
             notebook = new Notebook();
             notebook.setStatus('C');
-            notebook.setUserId(user);
+            notebook.setUserId(userRepository.findByUserId(user_id));
         }
-        HashSet<Chapter> chapters = new HashSet<>();
-        for (Long chapterId : notebookDTO.getSelected_chapters()) {
-            chapters.add(chapterRepository.findByChapterId(chapterId));
-        }
-        notebook.getChapters().addAll(chapters);
+
+        notebook = notebookTransformer.toEntity(notebook, notebookDTO);
         notebookRepository.save(notebook);
+    }
+
+    @Override
+    public NotesOutputDTO getNotes(Long user_id) {
+        Notebook notebook = notebookRepository.findNotebookIdForUser(user_id);
+        if (null == notebook) {
+            return null;
+        }
+        return notebookTransformer.toNotesOutputDTO(notebook);
     }
 }

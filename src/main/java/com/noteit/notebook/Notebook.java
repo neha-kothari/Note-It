@@ -41,4 +41,10 @@ public class Notebook {
             joinColumns = @JoinColumn(name = "notebookId"),
             inverseJoinColumns = @JoinColumn(name = "chapterId"))
     private Set<Chapter> chapters;
+
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
