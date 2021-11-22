@@ -61,7 +61,7 @@ public class UserController {
     @GetMapping(path ="/users/{user_id}/notes")
     public ResponseEntity<NotesOutputDTO> getNotes(@PathVariable Long user_id) throws Exception {
 
-        return ResponseEntity.created(null)
+        return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(notebookService.getNotes(user_id));
 
@@ -70,8 +70,7 @@ public class UserController {
     @DeleteMapping(path ="/users/{user_id}/notes/{chapter_id}")
     public ResponseEntity<NotesOutputDTO> deleteFromNotes(@PathVariable Long user_id, @PathVariable Long chapter_id) throws Exception {
 
-
-        return ResponseEntity.created(null)
+        return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(notebookService.deleteChapter(user_id, chapter_id));
 
