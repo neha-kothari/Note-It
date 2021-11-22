@@ -18,6 +18,8 @@ import javax.annotation.Resource;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +67,7 @@ public class BookServiceImpl implements BookService {
         }
         book.setFileLocation(uploadBookFile(bookFile));
         book.setUploadedBy(userRepository.findByUserId(user_id));
+        book.setCreatedOn(LocalDateTime.now());
         bookRepository.save(book);
 
         List<Book> books = new ArrayList<>();
@@ -80,7 +83,7 @@ public class BookServiceImpl implements BookService {
         String imagePath = System.currentTimeMillis() + bookFile.getOriginalFilename();
         Path path = Paths.get(bookBasePath + imagePath);
         Files.write(path, bytes);
-        return imagePath;
+        return bookBasePath + imagePath;
     }
 
     @Override
@@ -98,7 +101,7 @@ public class BookServiceImpl implements BookService {
         if (Strings.isBlank(bookPath)) {
             return null;
         }
-        Path path = Paths.get(bookBasePath + bookPath);
+        Path path = Paths.get(bookPath);
         return Files.readAllBytes(path);
     }
 

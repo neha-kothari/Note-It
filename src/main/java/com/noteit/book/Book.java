@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +45,7 @@ public class Book {
     private boolean isDeleted;
 
     @Column
-    private Date createdOn;
+    private LocalDateTime createdOn;
 
     @Column
     private boolean isSplit;

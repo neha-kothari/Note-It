@@ -24,6 +24,8 @@ spring:
       ddl-auto: update
 
 noteit:
+  notebook:
+    path: D:\\Projects\\Books\\Notebooks\\
   book:
     path: D:\\Projects\\Books\\
     default-image:

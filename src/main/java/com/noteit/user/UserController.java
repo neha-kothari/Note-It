@@ -4,6 +4,9 @@ import com.noteit.book.BookService;
 import com.noteit.dto.*;
 import com.noteit.notebook.NotebookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -72,6 +75,24 @@ public class UserController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(notebookService.deleteChapter(user_id, chapter_id));
 
+    }
+
+    @PostMapping(path ="/users/{user_id}/notes/merge")
+    public ResponseEntity<ByteArrayResource> mergeNotes(@RequestBody NotebookDTO notebookDTO, @PathVariable Long user_id) throws Exception {
+
+        if (notebookDTO.getCustom_name() == null || notebookDTO.getCustom_name().isEmpty()) {
+            throw new Exception("Invalid Notebook Name");
+        }
+        try {
+            FileDTO file = notebookService.mergeNotes(notebookDTO, user_id);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .header(HttpHeaders.CONTENT_DISPOSITION,"attachment:filename=\\"+file.getFileName()+"\\")
+                    .body(file.getData());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     @PostMapping(path ="/users/trial")

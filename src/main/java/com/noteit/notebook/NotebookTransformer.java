@@ -26,7 +26,10 @@ public class NotebookTransformer {
 
         HashSet<Chapter> chapters = new HashSet<>();
         for (Long chapterId : request.getSelected_chapters()) {
-            chapters.add(chapterRepository.findByChapterId(chapterId));
+            Chapter chapter = chapterRepository.findByChapterId(chapterId);
+            if (null != chapter) {
+                chapters.add(chapter);
+            }
         }
         if (null ==  notebook.getChapters()) {
             notebook.setChapters(new HashSet<>());
