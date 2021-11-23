@@ -1,27 +1,23 @@
 package com.noteit.notebook;
 
+import com.noteit.book.Book;
 import com.noteit.chapter.Chapter;
 import com.noteit.chapter.ChapterRepository;
 import com.noteit.dto.FileDTO;
 import com.noteit.dto.NotebookDTO;
 import com.noteit.dto.NotesOutputDTO;
-import com.noteit.service.PDFMergeService;
-import com.noteit.user.User;
+import com.noteit.service.PDFService;
 import com.noteit.user.UserRepository;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.transaction.Transactional;
-import java.io.File;
+import org.springframework.transaction.annotation.Transactional;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 @Component
 public class NotebookServiceImpl implements NotebookService{
@@ -30,7 +26,7 @@ public class NotebookServiceImpl implements NotebookService{
     private NotebookRepository notebookRepository;
 
     @Resource
-    private PDFMergeService pdfMergeService;
+    private PDFService pdfMergeService;
 
     @Resource
     private UserRepository userRepository;
@@ -84,6 +80,7 @@ public class NotebookServiceImpl implements NotebookService{
         return notebookTransformer.toNotesOutputDTO(notebook);
     }
 
+
     @Override
     public FileDTO mergeNotes(NotebookDTO notebookDTO, Long user_id) throws Exception {
         saveNotes(notebookDTO, user_id);
@@ -106,5 +103,16 @@ public class NotebookServiceImpl implements NotebookService{
         }
         Path path = Paths.get(notebookPath);
         return Files.readAllBytes(path);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public FileDTO downloadNotes(Long notebook_id) throws Exception {
+
+        Notebook notebook = notebookRepository.findByNotebookId(notebook_id);
+        FileDTO file = new FileDTO();
+        file.setFileName(notebook.getNotebookName());
+        file.setData(new ByteArrayResource(retrieveNoteBook(notebook.getLocation())));
+        return file;
     }
 }

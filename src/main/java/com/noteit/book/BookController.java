@@ -1,6 +1,6 @@
 package com.noteit.book;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.noteit.dto.BookDTO;
 import com.noteit.dto.BookDetailsDTO;
 import com.noteit.dto.ChapterDTO;
@@ -11,9 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -54,17 +54,22 @@ public class BookController {
     }
 
     @PostMapping("/split")
-    public ResponseEntity<BookDetailsDTO> getBookDetails(@RequestBody BookDetailsDTO bookDetails){
+    public ResponseEntity<BookDetailsDTO> getBookDetails(@RequestBody BookDetailsDTO bookDetails) {
+
         try {
-            BookDetailsDTO bookDetailsDTO = bookService.splitBook(bookDetails);
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(bookDetailsDTO);
+            if (validateSplitRequest(bookDetails)) {
+                BookDetailsDTO bookDetailsDTO = bookService.splitBook(bookDetails);
+                return ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(bookDetailsDTO);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bookDetails);
+            }
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bookDetails);
         }
     }
-
 
     @GetMapping("/{book_id}/download")
     public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable Long book_id) {
@@ -81,5 +86,23 @@ public class BookController {
         }
     }
 
+    private boolean validateSplitRequest(BookDetailsDTO bookDetails) throws IOException {
+
+        int totalPages = bookService.getTotalPages(bookDetails);
+
+        for (ChapterDTO chapter : bookDetails.getChapters()) {
+            if (chapter.getStartPage() > chapter.getEndPage()) {
+                bookDetails.setError("Start Page is greater than End Page for Chapter Number: " + chapter.getChapterNumber());
+                return false;
+            }
+
+            if (chapter.getStartPage() > totalPages || chapter.getEndPage() > totalPages) {
+                bookDetails.setError("Start Page or End Page is greater than total pages in the book for Chapter Number: " + chapter.getChapterNumber());
+                return false;
+            }
+        }
+
+        return true;
+    }
 
 }

@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.noteit.book.BookService;
 import com.noteit.dto.*;
 import com.noteit.notebook.NotebookService;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -39,14 +40,19 @@ public class UserController {
     }
 
     @PostMapping(path ="/users/{user_id}/upload")
-    public ResponseEntity<BookDTO> uploadBook(@RequestParam("json") String requestString, @RequestParam("file") MultipartFile bookFile, @PathVariable Long user_id) throws Exception {
+    public ResponseEntity<BookDetailsDTO> uploadBook(@RequestParam("json") String requestString, @RequestParam("file") MultipartFile bookFile, @PathVariable Long user_id) throws Exception {
 
-        BookDTO request = new ObjectMapper().readValue(requestString, BookDTO.class);
-        return ResponseEntity.created(null)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(bookService.addBook(request, bookFile, user_id));
-
+        BookDetailsDTO request = new ObjectMapper().readValue(requestString, BookDetailsDTO.class);
+        if (validateUploadRequest(request)) {
+            return ResponseEntity.created(null)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(bookService.addBook(request, bookFile, user_id));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(request);
+        }
     }
+
+
 
     @PostMapping(path ="/users/{user_id}/notes")
     public ResponseEntity<NotebookDTO> saveNotes(@RequestBody NotebookDTO notebookDTO, @PathVariable Long user_id) throws Exception {
@@ -100,5 +106,26 @@ public class UserController {
         return ResponseEntity.created(null)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(userService.addUser(user));
+    }
+
+    private boolean validateUploadRequest(BookDetailsDTO request) {
+
+        if (Strings.isBlank(request.getBookName())) {
+            request.setError("Book Title should not be blank.");
+            return false;
+        } else if (Strings.isBlank(request.getAuthor())) {
+            request.setError("Author should not be blank.");
+            return false;
+        } else if (Strings.isBlank(request.getDescription())) {
+            request.setError("Description should not be blank.");
+            return false;
+        } else if (Strings.isBlank(request.getIsbnNumber())) {
+            request.setError("ISBN should not be blank.");
+            return false;
+        } else if (bookService.isbnExists(request.getIsbnNumber())) {
+            request.setError("Book with this ISBN number exists already.");
+            return false;
+        }
+        return true;
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.Multipart;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -21,8 +22,12 @@ public interface BookService {
     byte[] retrieveBook(String bookPath) throws Exception;
     FileDTO downloadBook(Long bookId) throws Exception ;
 
-    BookDTO addBook(BookDTO bookDetails, MultipartFile bookFile, Long user_id) throws Exception;
-    String uploadBookFile(MultipartFile bookFile) throws Exception;
+    BookDetailsDTO addBook(BookDetailsDTO bookDetails, MultipartFile bookFile, Long user_id) throws Exception;
+    String uploadBookFile(MultipartFile bookFile, Long bookI) throws Exception;
 
     BookDetailsDTO splitBook(BookDetailsDTO bookDetails) throws Exception;
+
+    boolean isbnExists(String isbnNumber);
+
+    int getTotalPages(BookDetailsDTO bookDetailsDTO) throws IOException;
 }

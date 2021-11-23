@@ -13,6 +13,8 @@ public interface NotebookService {
 
     NotesOutputDTO deleteChapter(Long user_id, Long chapter_id);
 
+    FileDTO downloadNotes(Long notebook_id) throws Exception;
+
     FileDTO mergeNotes(NotebookDTO notebookDTO, Long user_id) throws Exception;
 
     byte[] retrieveNoteBook(String notebookPath) throws Exception;

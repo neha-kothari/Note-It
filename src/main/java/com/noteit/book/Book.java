@@ -21,7 +21,7 @@ public class Book {
     private Long bookId;
     @Column(nullable = false)
     private String bookName;
-    @Column
+    @Column(unique = true)
     private String isbnNumber;
     @Column(nullable = false)
     private String author;

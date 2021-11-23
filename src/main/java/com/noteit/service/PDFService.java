@@ -9,6 +9,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -20,12 +21,12 @@ import java.util.List;
 import java.util.Set;
 
 @Component
-public class PDFMergeService  {
+public class PDFService {
 
     @Value(("${noteit.notebook.path}"))
     private String notebookBasePath;
 
-    public String merge(Notebook notebook)  {
+    public String merge(Notebook notebook) {
 
         System.out.println("notebookBasePath : " + notebookBasePath);
         String nbFolderPath = notebookBasePath + File.separator + notebook.getNotebookId();
@@ -39,6 +40,8 @@ public class PDFMergeService  {
 
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            deleteDirectory(nbFolderPath);
         }
         return null;
 
@@ -54,6 +57,23 @@ public class PDFMergeService  {
         } else {
             System.out.println("Error Found!");
         }
+    }
+
+    private void deleteDirectory(String filepath) {
+
+        try {
+            File file = new File(filepath);
+
+            // call deleteDirectory method to delete directory recursively
+            FileUtils.deleteDirectory(file);
+
+            // delete folder
+            file.delete();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Could not delete directory");
+        }
+
     }
 
     public List<String> extractChapters(String nbFolderPath, Set<Chapter> chapterDetails) throws IOException {
@@ -91,6 +111,8 @@ public class PDFMergeService  {
                 return fileName;
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                document.close();
             }
         }
         return null;
@@ -113,7 +135,7 @@ public class PDFMergeService  {
             float titleWidth = PDType1Font.HELVETICA_BOLD.getStringWidth(customEBookName) / 1000 * 64;
             float titleHeight = PDType1Font.HELVETICA_BOLD.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * 64;
 
-            // Lets try a different font and size
+            // Let's try a different font and size
             pdPageContentStream.beginText();
             pdPageContentStream.newLineAtOffset((pdPage.getMediaBox().getWidth() - titleWidth) / 2,
                     pdPage.getMediaBox().getHeight() - 30 - titleHeight);
@@ -130,8 +152,6 @@ public class PDFMergeService  {
 
             // Once all the content is written, close the stream
             pdPageContentStream.close();
-
-
             pdDocument.save(destination);
             pdDocument.close();
             System.out.println("PDF saved to the location !!!");
@@ -139,6 +159,8 @@ public class PDFMergeService  {
 
         } catch (IOException ioe) {
             System.out.println("Error while saving pdf" + ioe.getMessage());
+        } finally {
+            pdDocument.close();
         }
         return null;
     }
@@ -152,12 +174,10 @@ public class PDFMergeService  {
         PDFmerger.setDestinationFileName(destinationFileName);
 
         File indexPage = new File(indexPageLocation);
-        PDDocument indexPageDocument = PDDocument.load(indexPage);
         PDFmerger.addSource(indexPage);
 
         for(String chapterLocation: chaptersPDFList){
             File file = new File(chapterLocation);
-            PDDocument document = PDDocument.load(file);
             //adding the source files
             PDFmerger.addSource(file);
         }
@@ -170,7 +190,7 @@ public class PDFMergeService  {
 
     public String generate_page_numbers(String file_name) {
         File load_file = new File(file_name);
-        PDDocument doc=null;
+        PDDocument doc;
         try {
 
             doc = PDDocument.load(load_file);
@@ -198,5 +218,12 @@ public class PDFMergeService  {
             e.printStackTrace();
         }
         return file_name;
+    }
+
+    public int getTotalNumberOfPages(String bookLocation) throws IOException {
+        File pdfFile = new File(bookLocation);
+        PDDocument document = PDDocument.load(pdfFile);
+
+        return document.getNumberOfPages();
     }
 }

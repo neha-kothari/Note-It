@@ -6,6 +6,7 @@ import com.noteit.dto.BookDTO;
 import com.noteit.dto.BookDetailsDTO;
 import com.noteit.dto.ChapterDTO;
 import com.noteit.dto.FileDTO;
+import com.noteit.service.PDFService;
 import com.noteit.user.UserRepository;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -44,6 +46,9 @@ public class BookServiceImpl implements BookService {
     @Resource
     private ChapterService chapterService;
 
+    @Resource
+    private PDFService pdfService;
+
     @Override
     @Transactional(readOnly = true)
     public List<BookDTO> getAllBooks() {
@@ -60,30 +65,27 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDTO addBook(BookDTO bookDetails, MultipartFile bookFile, Long user_id) throws Exception{
+    public BookDetailsDTO addBook(BookDetailsDTO bookDetails, MultipartFile bookFile, Long user_id) throws Exception{
         Book book = bookRepository.save(bookTransformer.toEntity(new Book(), bookDetails));
         if (book.getImageLocation() == null || book.getImageLocation().isEmpty()) {
             book.setImageLocation(defaultImagePath);
         }
-        book.setFileLocation(uploadBookFile(bookFile));
         book.setUploadedBy(userRepository.findByUserId(user_id));
         book.setCreatedOn(LocalDateTime.now());
+        book = bookRepository.save(book);
+        book.setFileLocation(uploadBookFile(bookFile, book.getBookId()));
         bookRepository.save(book);
-
-        List<Book> books = new ArrayList<>();
-        books.add(bookTransformer.toEntity(book, bookDetails));
-        return bookTransformer.toBookDTOs(books).get(0);
-
+        return bookTransformer.toBookDetailsDTO(book);
     }
 
     @Override
     @Transactional
-    public String uploadBookFile(MultipartFile bookFile) throws Exception {
+    public String uploadBookFile(MultipartFile bookFile, Long bookId) throws Exception {
         byte[] bytes = bookFile.getBytes();
-        String imagePath = System.currentTimeMillis() + bookFile.getOriginalFilename();
-        Path path = Paths.get(bookBasePath + imagePath);
+        String bookPath = System.currentTimeMillis() + String.valueOf(bookId);
+        Path path = Paths.get(bookBasePath + bookPath);
         Files.write(path, bytes);
-        return bookBasePath + imagePath;
+        return bookBasePath + bookPath;
     }
 
     @Override
@@ -110,7 +112,6 @@ public class BookServiceImpl implements BookService {
     public BookDetailsDTO splitBook(BookDetailsDTO bookDetails) throws Exception {
 
         Book book = bookRepository.findByBookId(bookDetails.getBookId());
-        validateRequest(book, bookDetails.getChapters());
         List<Chapter> bookChapters = new ArrayList<>();
         for (ChapterDTO chapter : bookDetails.getChapters()) {
             Chapter c = chapterService.addChapter(chapter, book);
@@ -122,8 +123,20 @@ public class BookServiceImpl implements BookService {
         return bookTransformer.toBookDetailsDTO(book);
     }
 
-    public void validateRequest(Book book, List<ChapterDTO> chapters) throws Exception{
+    @Override
+    public boolean isbnExists(String isbnNumber) {
+
+        Book book = bookRepository.findByIsbnNumber(isbnNumber);
+        return book != null;
+    }
+
+    @Override
+    public int getTotalPages(BookDetailsDTO bookDetails) throws IOException {
+
+        Book book = bookRepository.findByBookId(bookDetails.getBookId());
+        return pdfService.getTotalNumberOfPages(book.getFileLocation());
 
     }
+
 }
 

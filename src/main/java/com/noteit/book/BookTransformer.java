@@ -49,12 +49,15 @@ public class BookTransformer {
         return bookDTOs;
     }
 
-    public Book toEntity(Book book, BookDTO request) {
+    public Book toEntity(Book book, BookDetailsDTO request) {
         book.setBookName(request.getBookName());
         book.setAuthor(request.getAuthor());
         book.setIsbnNumber(request.getIsbnNumber());
+        book.setDescription(request.getDescription());
+        book.setSplit(request.isSplit());
+        if (null != request.getImageLocation()) {
 
-
+        }
         return bookRepository.saveAndFlush(book);
     }
 
