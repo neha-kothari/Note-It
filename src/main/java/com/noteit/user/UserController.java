@@ -73,6 +73,16 @@ public class UserController {
 
     }
 
+    @GetMapping(path ="/users/{user_id}/profile")
+    public ResponseEntity<UserDTO> getProfile(@PathVariable Long user_id) throws Exception {
+
+        /*return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(userService.getProfile(user_id));*/
+        return null;
+
+    }
+
     @DeleteMapping(path ="/users/{user_id}/notes/{chapter_id}")
     public ResponseEntity<NotesOutputDTO> deleteFromNotes(@PathVariable Long user_id, @PathVariable Long chapter_id) throws Exception {
 

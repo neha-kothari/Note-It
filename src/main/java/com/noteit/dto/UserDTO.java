@@ -14,23 +14,10 @@ import java.util.List;
 public class UserDTO {
 
     private Long userId;
-    @Column(nullable = false, unique = true)
-    private String emailAddress;
-    @Column(nullable = false)
-    private int userType;
-    @Column(nullable = false)
-    private char accountStatus;
-    @Column(nullable = false)
-    private String password;
-    @Column(nullable = false)
     private String name;
-    @Column(nullable = false)
+    private String emailAddress;
     private String phoneNumber;
-
-    @OneToMany(mappedBy = "uploadedBy")
-    private List<Book> uploadedBooks;
-
-    @OneToMany(mappedBy = "userId")
-    private List<Notebook> notebooks;
+    private List<BookDTO> uploadedBooks;
+    private List<NotebookDTO> notebooks;
 
 }
