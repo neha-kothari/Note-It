@@ -1,6 +1,5 @@
 package com.noteit.notebook;
 
-import com.noteit.book.Book;
 import com.noteit.chapter.Chapter;
 import com.noteit.chapter.ChapterRepository;
 import com.noteit.dto.FileDTO;
@@ -71,9 +70,7 @@ public class NotebookServiceImpl implements NotebookService{
         }
         if (notebook.getChapters() != null) {
             Chapter chapter = chapterRepository.findByChapterId(chapter_id);
-            if (notebook.getChapters().contains(chapter)) {
-                notebook.getChapters().remove(chapter);
-            }
+            notebook.getChapters().remove(chapter);
             notebookRepository.save(notebook);
         }
 

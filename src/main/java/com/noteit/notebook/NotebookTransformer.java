@@ -34,7 +34,7 @@ public class NotebookTransformer {
         if (null ==  notebook.getChapters()) {
             notebook.setChapters(new HashSet<>());
         }
-        notebook.getChapters().addAll(chapters);
+        notebook.setChapters(chapters);
 
         return notebook;
     }
