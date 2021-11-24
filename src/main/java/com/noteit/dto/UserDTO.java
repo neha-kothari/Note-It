@@ -18,6 +18,6 @@ public class UserDTO {
     private String emailAddress;
     private String phoneNumber;
     private List<BookDTO> uploadedBooks;
-    private List<NotebookDTO> notebooks;
+    private List<NotesOutputDTO> notebooks;
 
 }

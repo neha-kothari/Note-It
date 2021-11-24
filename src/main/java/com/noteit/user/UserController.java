@@ -74,12 +74,15 @@ public class UserController {
     }
 
     @GetMapping(path ="/users/{user_id}/profile")
-    public ResponseEntity<UserDTO> getProfile(@PathVariable Long user_id) throws Exception {
+    public ResponseEntity<Object> getProfile(@PathVariable Long user_id) throws Exception {
 
-        /*return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(userService.getProfile(user_id));*/
-        return null;
+        UserDTO userDTO = userService.profile(user_id);
+        if (null != userDTO) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(userService.profile(user_id));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User ID does not exist!");
 
     }
 
