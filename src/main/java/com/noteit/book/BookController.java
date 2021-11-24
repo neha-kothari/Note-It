@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/books")
+@RequestMapping("/books")
 public class BookController {
 
     @Resource
