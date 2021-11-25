@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class Book {
     private Long bookId;
     @Column(nullable = false)
     private String bookName;
-    @Column
+    @Column(unique = true)
     private String isbnNumber;
     @Column(nullable = false)
     private String author;
@@ -31,8 +32,8 @@ public class Book {
 
     @Column
     private String imageLocation;
-    @Lob
-    private byte[] file;
+    @Column
+    private String fileLocation;
     @Column
     private String description;
 
@@ -44,7 +45,7 @@ public class Book {
     private boolean isDeleted;
 
     @Column
-    private Date createdOn;
+    private LocalDateTime createdOn;
 
     @Column
     private boolean isSplit;

@@ -5,7 +5,6 @@ import com.noteit.chapter.ChapterTransformer;
 import com.noteit.dto.BookDTO;
 import com.noteit.dto.BookDetailsDTO;
 import com.noteit.dto.ChapterDTO;
-import com.noteit.user.User;
 import com.noteit.user.UserRepository;
 import org.springframework.stereotype.Component;
 
@@ -41,6 +40,7 @@ public class BookTransformer {
                 bookDTO.setYearOfRelease(book.getYearOfRelease());
                 bookDTO.setImageLocation(book.getImageLocation());
                 bookDTO.setUploadedByUser(userRepository.findByUserId(book.getUploadedBy().getUserId()).getName());
+                bookDTO.setUploadedOn(book.getCreatedOn());
                 bookDTOs.add(bookDTO);
             } else {
                 bookDTOs.add(null);
@@ -50,27 +50,19 @@ public class BookTransformer {
         return bookDTOs;
     }
 
-    public Book toEntity(Book book, BookDTO request) {
+    public Book toEntity(Book book, BookDetailsDTO request) {
         book.setBookName(request.getBookName());
         book.setAuthor(request.getAuthor());
         book.setIsbnNumber(request.getIsbnNumber());
+        book.setDescription(request.getDescription());
+        book.setSplit(request.isSplit());
+        if (null != request.getImageLocation()) {
 
-        //User user = userRepository.findById(request.getUploadedByUser());
-
-       /* book.setGraduationYear(LocalDate.of(Integer.parseInt(request.getGraduationYear()), 1, 1));
-        book.setTotalCredits(request.getTotalCredits());
-        book.setDeleted(request.isDeleted());
-
-        Domain domain = domainRepository.findByProgram(request.getDomainDto().getProgram());
-        student.setDomain(domain);
-
-        Specialisation specialisation = specialisationRepository.findByCode(request.getSpecialisationDto().getCode());
-        student.setSpecialisation(specialisation);*/
-
+        }
         return bookRepository.saveAndFlush(book);
     }
 
-    public BookDetailsDTO toBookDTO(Book book) throws Exception {
+    public BookDetailsDTO toBookDetailsDTO(Book book) throws Exception {
 
         if (null == book || book.isDeleted()) {
             throw new Exception("Invalid Book Id");
@@ -85,11 +77,14 @@ public class BookTransformer {
         bookDetailsDTO.setImageLocation(book.getImageLocation());
         bookDetailsDTO.setUploadedByUser(userRepository.findByUserId(book.getUploadedBy().getUserId()).getName());
         bookDetailsDTO.setDescription(book.getDescription());
-        List<ChapterDTO> chapters = new ArrayList<>();
-        for (Chapter chapter : book.getChapters()) {
-            chapters.add(chapterTransformer.toDto(chapter));
+        bookDetailsDTO.setSplit(book.isSplit());
+        if (book.isSplit()) {
+            List<ChapterDTO> chapters = new ArrayList<>();
+            for (Chapter chapter : book.getChapters()) {
+                chapters.add(chapterTransformer.toDto(chapter));
+            }
+            bookDetailsDTO.setChapters(chapters);
         }
-        bookDetailsDTO.setChapters(chapters);
         return bookDetailsDTO;
     }
 }

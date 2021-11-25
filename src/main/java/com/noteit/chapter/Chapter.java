@@ -38,4 +38,10 @@ public class Chapter {
 
     @ManyToMany(mappedBy = "chapters")
     private Set<Notebook> notebookSet;
+
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

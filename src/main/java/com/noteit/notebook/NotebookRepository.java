@@ -9,4 +9,6 @@ public interface NotebookRepository  extends JpaRepository<Notebook, Long> {
 
     @Query(value = "SELECT * FROM notebook n WHERE n.user_id = :userId and n.status = 'C'", nativeQuery = true)
     Notebook findNotebookIdForUser(@Param("userId") Long userId);
+
+    Notebook findByNotebookId(Long notebookId);
 }
