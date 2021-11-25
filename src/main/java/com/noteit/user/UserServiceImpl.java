@@ -5,14 +5,24 @@ import com.noteit.book.BookTransformer;
 import com.noteit.dto.*;
 import com.noteit.notebook.Notebook;
 import com.noteit.notebook.NotebookTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Component
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Resource
     private UserRepository userRepository;
@@ -28,7 +38,7 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setEmailAddress(userDTO.getEmailAddress());
         user.setName(userDTO.getFirstName() + " " + userDTO.getLastName());
-        user.setPassword(userDTO.getPassword());
+        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         user.setPhoneNumber(userDTO.getPhoneNumber());
         user.setAccountStatus('A'); //A - Active
         user = userRepository.save(user);
@@ -63,5 +73,18 @@ public class UserServiceImpl implements UserService {
         return userDTO;
     }
 
+    public UserDTO getUserByEmail(String email) {
+        User user = userRepository.findByEmailAddress(email);
+        return toDTO(user);
+    }
 
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByEmailAddress(username);
+        if(user == null) {
+            throw new UsernameNotFoundException("Invalid username or password.");
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUserId().toString(), user.getPassword(), Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
+    }
 }

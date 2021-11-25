@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("/v1/notes")
+@RequestMapping("/notes")
 public class NotebookController {
 
     @Resource

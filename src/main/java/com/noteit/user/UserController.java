@@ -1,19 +1,29 @@
 package com.noteit.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.noteit.book.BookService;
+import com.noteit.config.JwtTokenProvider;
 import com.noteit.dto.*;
 import com.noteit.notebook.NotebookService;
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 
 @RestController
 public class UserController {
@@ -27,11 +37,13 @@ public class UserController {
     @Resource
     private NotebookService notebookService;
 
-    @PutMapping(path = "/login")
-    public boolean getLoginStatus(@RequestBody UserDTO request) {
-        //return userService.getLoginStatus(request);
-        return false;
-    }
+    @Resource
+    private AuthenticationManager authenticationManager;
+
+    @Resource
+    private JwtTokenProvider tokenProvider;
+
+    private static Logger log = LoggerFactory.getLogger(UserService.class);
 
     @PostMapping(path = "/register")
     public boolean registerUser(@RequestBody UserDTO request) {
@@ -132,13 +144,34 @@ public class UserController {
         } else if (Strings.isBlank(request.getDescription())) {
             request.setError("Description should not be blank.");
             return false;
-        } else if (Strings.isBlank(request.getIsbnNumber())) {
-            request.setError("ISBN should not be blank.");
-            return false;
         } else if (bookService.isbnExists(request.getIsbnNumber())) {
             request.setError("Book with this ISBN number exists already.");
             return false;
         }
         return true;
+    }
+
+    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Object> authenticate(@RequestBody AuthenticationRequest user) throws Exception {
+
+        try {
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"))));
+            if (authentication.isAuthenticated()) {
+                String email = user.getUsername();
+                UserDTO userDTO = userService.getUserByEmail(email);
+                final String jwtToken =  tokenProvider.createToken(email);
+                return ResponseEntity.ok(new AuthenticationResponse(userDTO.getUserId(), jwtToken));
+            }else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Credentials");
+            }
+        } catch (BadCredentialsException e) {
+            e.printStackTrace();
+            throw new Exception("Invalid credentials!", e);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Exception!!");
+        }
     }
 }

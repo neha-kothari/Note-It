@@ -23,6 +23,10 @@ spring:
     hibernate:
       ddl-auto: update
 
+#JWT
+jwt:
+  secret-key: noteit
+
 noteit:
   notebook:
     path: D:\\Projects\\Books\\Notebooks\\
