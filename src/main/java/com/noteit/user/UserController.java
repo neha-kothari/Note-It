@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.util.Collections;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class UserController {
 

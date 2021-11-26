@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/notes")
 public class NotebookController {
