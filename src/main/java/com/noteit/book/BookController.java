@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/books")
 public class BookController {

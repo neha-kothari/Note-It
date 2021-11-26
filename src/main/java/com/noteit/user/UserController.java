@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.util.Collections;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class UserController {
 
@@ -44,12 +45,6 @@ public class UserController {
     private JwtTokenProvider tokenProvider;
 
     private static Logger log = LoggerFactory.getLogger(UserService.class);
-
-    @PostMapping(path = "/register")
-    public boolean registerUser(@RequestBody UserDTO request) {
-        //return userService.getLoginStatus(request);
-        return false;
-    }
 
     @PostMapping(path ="/users/{user_id}/upload")
     public ResponseEntity<BookDetailsDTO> uploadBook(@RequestParam("json") String requestString, @RequestParam("file") MultipartFile bookFile, @PathVariable Long user_id) throws Exception {
