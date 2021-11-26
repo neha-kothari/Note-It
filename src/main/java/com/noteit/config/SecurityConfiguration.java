@@ -12,9 +12,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder.BCryptVersion;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -35,30 +32,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return super.authenticationManagerBean();
 	}
 
-	@Bean
-	public CorsFilter corsFilter() {
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowCredentials(true);
-		config.addAllowedOrigin("*");
-		config.addAllowedHeader("*");
-		config.addAllowedMethod("OPTIONS");
-		config.addAllowedMethod("GET");
-		config.addAllowedMethod("POST");
-		config.addAllowedMethod("PUT");
-		config.addAllowedMethod("DELETE");
-		source.registerCorsConfiguration("/**", config);
-		return new CorsFilter(source);
-	}
-
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-
-		http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-				.authorizeRequests().antMatchers("/**").permitAll().anyRequest().authenticated();
-		http.apply(new JwtTokenConfigurer(tokenProvider));
-		//http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);;
 		http.cors();
+		http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+				.authorizeRequests().antMatchers("/registration/**", "/login", "/books/**", "/notes/**", "/users/**").permitAll().anyRequest().authenticated();
+		http.apply(new JwtTokenConfigurer(tokenProvider));
 	}
 
 }
