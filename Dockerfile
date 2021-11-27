@@ -1,4 +1,11 @@
-FROM openjdk:8
-COPY  ./target/Note-It-0.0.1-SNAPSHOT.jar ./
-WORKDIR ./
-CMD ["java", "-jar", "Note-It-0.0.1-SNAPSHOT.jar"]
+FROM maven:3.8.2-jdk-8
+
+WORKDIR /maven-app
+
+RUN mkdir books
+RUN mkdir noteBooks
+
+COPY . .
+RUN mvn clean install
+
+CMD mvn spring-boot:run

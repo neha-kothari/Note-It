@@ -51,6 +51,7 @@ public class NotebookTransformer {
             outputDTO.setCustomName(notebook.getNotebookName());
         }
         outputDTO.setCreatedOn(notebook.getCreationDate());
+        outputDTO.setNotebookId(notebook.getNotebookId());
         return outputDTO;
     }
 }

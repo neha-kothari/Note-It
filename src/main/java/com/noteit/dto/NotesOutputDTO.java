@@ -14,4 +14,5 @@ public class NotesOutputDTO {
     private String customName;
     private List<ChapterDTO> chapters;
     private LocalDateTime createdOn;
+    private Long notebookId;
 }

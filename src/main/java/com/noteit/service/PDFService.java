@@ -132,14 +132,14 @@ public class PDFService {
             // Create a Content Stream
             PDPageContentStream pdPageContentStream = new PDPageContentStream(pdDocument, pdPage);
 
-            float titleWidth = PDType1Font.HELVETICA_BOLD.getStringWidth(customEBookName) / 1000 * 64;
-            float titleHeight = PDType1Font.HELVETICA_BOLD.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * 64;
+            float titleWidth = PDType1Font.HELVETICA_BOLD.getStringWidth(customEBookName) / 1000 * 40;
+            float titleHeight = PDType1Font.HELVETICA_BOLD.getFontDescriptor().getFontBoundingBox().getHeight() / 1000 * 40;
 
             // Let's try a different font and size
             pdPageContentStream.beginText();
             pdPageContentStream.newLineAtOffset((pdPage.getMediaBox().getWidth() - titleWidth) / 2,
                     pdPage.getMediaBox().getHeight() - 30 - titleHeight);
-            pdPageContentStream.setFont(PDType1Font.HELVETICA_BOLD, 64);
+            pdPageContentStream.setFont(PDType1Font.HELVETICA_BOLD, 40);
             pdPageContentStream.showText(customEBookName);
             pdPageContentStream.endText();
 

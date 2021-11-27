@@ -67,9 +67,12 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDetailsDTO addBook(BookDetailsDTO bookDetails, MultipartFile bookFile, Long user_id) throws Exception{
         Book book = bookRepository.save(bookTransformer.toEntity(new Book(), bookDetails));
-        if (book.getImageLocation() == null || book.getImageLocation().isEmpty()) {
+        if (bookDetails.getImageLocation() == null || bookDetails.getImageLocation().isEmpty()) {
             book.setImageLocation(defaultImagePath);
+        } else {
+            book.setImageLocation(bookDetails.getImageLocation());
         }
+        
         book.setUploadedBy(userRepository.findByUserId(user_id));
         book.setCreatedOn(LocalDateTime.now());
         book = bookRepository.save(book);
